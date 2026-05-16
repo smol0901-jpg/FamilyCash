@@ -1,38 +1,65 @@
-# TaskControl Pro v1.0
+# TaskControl Pro (FamilyCash)
 
-Система управления задачами, людьми и финансами.
-Деплой: Netlify (drag & drop или GitHub). БД: Supabase (PostgreSQL + Realtime).
+Универсальная система управления задачами, проектами и финансами для бизнеса любого масштаба.
+
+---
+
+## Описание
+
+**TaskControl Pro** — бесплатный веб-инструмент для управления рабочими процессами. Подходит для малого, среднего и крупного бизнеса, а также для фрилансеров и партнёров.
+
+Возможности:
+- Задачи с назначением ответственных, приоритетами и статусами
+- Проекты с бюджетированием и планированием
+- Финансовый учёт (доходы и расходы) с привязкой к задачам
+- Участники: сотрудники и внешние подрядчики
+- Чекпойнты с автоматическим расчётом прогресса
+- Telegram-уведомления с настраиваемыми шаблонами
+- Журнал действий и история изменений
+- Realtime-обновления для всех пользователей
+
+---
+
+## Для кого подходит
+
+- Малый бизнес
+- Средний бизнес
+- Крупный бизнес (управляющее звено)
+- Фрилансеры
+- Партнёры и команды
+
+---
+
+## Технологии
+
+- **Frontend**: Vanilla JavaScript (ES6+), Tailwind CSS, Chart.js
+- **Backend**: Supabase (PostgreSQL, Auth, Realtime, RLS)
+- **Хостинг**: Netlify
 
 ---
 
 ## Быстрый старт
 
-### Шаг 1 — Supabase
+### 1. Supabase
 
 1. Зарегистрируйтесь на https://supabase.com
-2. Создайте новый проект (запомните пароль БД)
-3. Подождите ~2 минуты пока проект поднимается
-4. Перейдите в **SQL Editor** → **New query**
-5. Вставьте содержимое файла `sql/schema.sql` и нажмите **RUN**
-6. Перейдите в **Settings → API**
-7. Скопируйте:
-   - **Project URL** → это ваш `SUPABASE_URL`
-   - **anon public** → это ваш `SUPABASE_ANON_KEY`
+2. Создайте новый проект
+3. В SQL Editor выполните `sql/schema.sql`
+4. Скопируйте Project URL и anon key в настройках API
 
-### Шаг 2 — Настройка приложения
+### 2. Настройка приложения
 
-Откройте файл `assets/js/config.js` и замените:
+Отредактируйте `assets/js/config.js`:
 
 ```javascript
-const SUPABASE_URL      = 'YOUR_SUPABASE_URL';      // → вставьте URL
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // → вставьте ключ
+const SUPABASE_URL      = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 ```
 
-### Шаг 3 — Создать первого пользователя (администратора)
+### 3. Первый администратор
 
-1. В Supabase → **Authentication → Users → Add user**
-2. Введите email и пароль
-3. В **SQL Editor** выполните:
+1. Supabase → Authentication → Add user
+2. В SQL Editor выполните:
 
 ```sql
 UPDATE profiles
@@ -40,102 +67,26 @@ SET role = 'admin', full_name = 'Ваше Имя'
 WHERE id = (SELECT id FROM auth.users WHERE email = 'your@email.com');
 ```
 
-### Шаг 4 — Деплой на Netlify
+### 4. Деплой
 
-**Способ А: Drag & Drop (проще)**
-1. Зайдите на https://netlify.com
-2. Нажмите **Add new site → Deploy manually**
-3. Перетащите **всю папку** `taskcontrol-pro` в зону загрузки
-4. Готово — получите URL вида `https://xxx.netlify.app`
-
-**Способ Б: Через GitHub (для обновлений)**
-1. Создайте репозиторий на GitHub, загрузите папку
-2. Netlify → **Add new site → Import from Git**
-3. Выберите репозиторий → **Deploy**
-
-### Шаг 5 — Проверка
-
-1. Откройте URL сайта
-2. Войдите с email/паролем из Шага 3
-3. Создайте первую задачу
+Загрузите папку на Netlify через drag & drop или подключите GitHub-репозиторий.
 
 ---
 
-## Функциональность
+## Структура базы данных
 
-| Модуль | Описание |
-|--------|----------|
-| Дашборд | 6 метрик, 4 диаграммы, загрузка участников |
-| Задачи | CRUD, фильтры, сортировка, контекстное меню |
-| Участники | Сотрудники + внешние подрядчики в задаче |
-| Чекпойнты | Промежуточные результаты с автопрогрессом |
-| Финансы | Доходы/расходы с привязкой к задачам |
-| Журнал | Полная хронология + отчёт по задаче + печать |
-| Telegram | Настройка бота, шаблоны, история отправки |
-| Realtime | Мгновенные обновления у всех пользователей |
-| Роли | admin / manager / user / observer |
+- `organizations` — организации
+- `profiles` — пользователи
+- `projects` — проекты
+- `tasks` — задачи
+- `financial_operations` — финансовые операции
+- `task_checkpoints` — чекпойнты
+- `task_participants` — участники задач
+- `action_log` — журнал действий
+- `telegram_templates` — шаблоны уведомлений
 
 ---
 
-## Структура файлов
+## Лицензия
 
-```
-taskcontrol-pro/
-├── index.html                  — SPA-оболочка
-├── netlify.toml                — конфигурация Netlify
-├── sql/
-│   └── schema.sql              — полная схема БД (запустить в Supabase)
-└── assets/
-    ├── css/
-    │   └── main.css            — все стили
-    └── js/
-        ├── config.js           — ключи Supabase
-        ├── state.js            — хранилище состояния
-        ├── utils.js            — утилиты и форматирование
-        ├── api.js              — все запросы к Supabase
-        ├── auth.js             — аутентификация
-        ├── realtime.js         — Supabase Realtime
-        ├── charts.js           — Chart.js диаграммы
-        ├── router.js           — SPA-роутер
-        ├── search.js           — глобальный поиск
-        ├── app.js              — точка входа
-        ├── components/
-        │   ├── modal.js        — модальные окна
-        │   ├── toast.js        — уведомления
-        │   └── sidebar.js      — боковая панель
-        └── views/
-            ├── dashboard.js    — дашборд
-            ├── tasks.js        — задачи (главный модуль)
-            ├── finance.js      — финансы + люди + контроль + журнал + telegram + настройки + проекты + календарь + уведомления
-            └── ...
-```
-
----
-
-## Роли пользователей
-
-| Роль | Создавать задачи | Редактировать | Финансы | Пользователи |
-|------|:---:|:---:|:---:|:---:|
-| admin    | ✓ | ✓ | ✓ | ✓ |
-| manager  | ✓ | ✓ | ✓ | — |
-| user     | ✓ | свои | — | — |
-| observer | — | — | — | — |
-
----
-
-## Технический стек
-
-- **Frontend**: Vanilla JS (ES6+), Tailwind CSS, Chart.js, Lucide Icons
-- **Шрифты**: Manrope (UI) + JetBrains Mono (данные)
-- **Backend**: Supabase (PostgreSQL + Realtime + Auth + RLS)
-- **Хостинг**: Netlify (статический, бесплатный тариф)
-- **БД**: 10 таблиц, Row Level Security, триггеры автообновления
-
----
-
-## Поддержка
-
-При проблемах проверьте:
-1. Правильно ли вставлены `SUPABASE_URL` и `SUPABASE_ANON_KEY` в `config.js`
-2. Выполнен ли `schema.sql` в Supabase SQL Editor без ошибок
-3. Включена ли Realtime для таблиц в Supabase → Database → Replication
+MIT
